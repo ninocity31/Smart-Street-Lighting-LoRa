@@ -78,7 +78,9 @@ A single-stage LED driver was designed for the 220 V / 50 Hz mains: power factor
 | Controller | IRS27952 |
 | Dimming | MOSFET at the output, driven by the node PWM |
 
-Full description, component values and schematic: [`LED_Driver/`](LED_Driver/README.md).
+![LED driver schematic](docs/figures/led_driver_schematic.png)
+
+Full description and component values: [`LED_Driver/`](LED_Driver/README.md).
 
 ## Wiring
 
