@@ -20,6 +20,7 @@ The same firmware runs on masters and slaves. Only one line changes.
 |---|---|
 | `Node/node/` | `node.ino`: lamp node firmware (master or slave) |
 | `Gateway/gateway/` | `gateway.ino`: gateway firmware |
+| `LED_Driver/` | 220 V LED driver design: description, values, schematic |
 | `docs/figures/` | Figures used in this README |
 
 ## Hardware
@@ -32,7 +33,7 @@ The same firmware runs on masters and slaves. Only one line changes.
 | HB-100 | Doppler radar, 10.525 GHz | Master nodes |
 | HB-100 amplifier (2 op-amp stages) | Makes the radar signal readable by the ADC | Master nodes |
 | LDR + 10 kΩ | Checks that the lamp gives light | Every node |
-| Logic-level MOSFET | Dims the LED lamp with PWM | Every node |
+| LED driver (220 V → 36 V) | Powers and dims the LED lamp | Every node |
 | Arduino Uno | Gateway controller | Gateway |
 | RFM95W (SX1276, 868 MHz) | Gateway LoRa radio | Gateway |
 | SIM800L + LM2596 | GPRS link to the server, and its 4 V supply | Gateway |
@@ -63,18 +64,21 @@ The output sits around half the supply when nothing moves, and swings when somet
 - Power the amplifier from 3.3 V, so the output stays inside the ESP32 ADC range (0 to 3.3 V).
 - The code looks at how far the signal moves from its resting level, not at a fixed value.
 
-### LED driver (study)
+### LED driver
 
-A single-stage LED driver for the 220 V / 50 Hz mains was also studied: power factor correction followed by an LLC resonant converter.
+A single-stage LED driver was designed for the 220 V / 50 Hz mains: power factor correction followed by an LLC resonant converter, with PWM dimming at the output.
+
+![LED driver blocks](docs/figures/led_driver_blocks.png)
 
 | Item | Value |
 |---|---|
 | Input | 220 V AC, 50 Hz |
 | Output | 36 V, 4 A (144 W) |
-| Topology | Interleaved PFC stage + half-bridge LLC |
-| Controller | IRS2795 |
+| Topology | Interleaved buck PFC + half-bridge LLC |
+| Controller | IRS27952 |
+| Dimming | MOSFET at the output, driven by the node PWM |
 
-This part is a paper design. It is not needed to run the code.
+Full description, component values and schematic: [`LED_Driver/`](LED_Driver/README.md).
 
 ## Wiring
 
